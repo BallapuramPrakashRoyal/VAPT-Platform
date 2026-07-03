@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - '27017:27017'
+
+  zap:
+    image: zaproxy/zap-stable
+    restart: unless-stopped
+    command: >
+      zap.sh -daemon -host 0.0.0.0 -port 8080
+      -config api.key=changeme-zap-key
+      -config api.addrs.addr.name=.*
+      -config api.addrs.addr.regex=true
+    ports:
+      - '8080:8080'
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      - mongo
+      - zap
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+      - MONGO_URI=mongodb://mongo:27017/vapt_platform
+      - CLIENT_ORIGIN=*
+      - ZAP_API_URL=http://zap:8080
+      - ZAP_API_KEY=changeme-zap-key
+      - NMAP_PATH=nmap
+    ports:
+      - '5000:5000'
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - '80:80'
+
+volumes:
+  mongo_data:
