@@ -96,47 +96,6 @@ docker compose up --build
 Then open **http://localhost** (frontend) — it proxies API calls to the backend
 automatically. To try it, use target `scanme.nmap.org`.
 
-## Deploying live
-
-The cleanest path is any host that runs Docker Compose or a single Dockerfile per
-service (e.g., a small cloud VM, Railway, Render, or Fly.io):
-
-1. **Push this repo to GitHub** (see below).
-2. On your host, either:
-   - Run `docker compose up -d --build` directly on a VM (simplest — nmap/ZAP need a
-     real OS process, so a VM or Docker-capable platform works better here than a
-     pure serverless platform), or
-   - Deploy `backend/Dockerfile` and `frontend/Dockerfile` as two separate services
-     on Render/Railway, plus a managed MongoDB (e.g., MongoDB Atlas free tier) and a
-     third container running `zaproxy/zap-stable` for the web vuln module.
-3. Set environment variables on the backend service to match `.env.example`
-   (`MONGO_URI` pointing at your MongoDB instance, `ZAP_API_URL`/`ZAP_API_KEY`
-   pointing at your ZAP container, `CLIENT_ORIGIN` set to your deployed frontend
-   URL).
-4. Set `VITE_API_URL` (or rely on the nginx proxy in `frontend/nginx.conf`) so the
-   frontend can reach the backend.
-
-**Note on managed platforms:** Nmap needs to run actual network scans and ZAP is a
-long-running Java process, so serverless/edge platforms (e.g. Vercel functions)
-won't work for the backend — use a VM, a Docker-based PaaS service, or a small
-always-on container instance.
-
-## Pushing this project to GitHub
-
-From inside the `vapt-platform` folder:
-
-```bash
-git init
-git add .
-git commit -m "Initial commit: VAPT web application"
-git branch -M main
-git remote add origin https://github.com/<your-username>/<your-repo-name>.git
-git push -u origin main
-```
-
-(Create the empty repo on GitHub first via github.com/new, without a README, then
-run the commands above.)
-
 ## API reference
 
 | Method | Route            | Description                              |
@@ -146,10 +105,5 @@ run the commands above.)
 | GET    | `/api/scans/:id` | Get one scan with full results            |
 | DELETE | `/api/scans/:id` | Delete a scan                             |
 
-## Roadmap ideas (good for a viva / future work section)
-
-- Auth + multi-user projects (schema already isolates by scan, easy to add `userId`)
-- PDF/CSV export of the structured report (`pdfkit` is already a backend dependency)
-- Queue-based execution (BullMQ + Redis) instead of in-process async for scan jobs
-- Scheduled/recurring scans
-- CVE lookups for detected service versions (NVD API)
+## Credits
+Designed and Developed by Ballapuram Prakash Royal.
