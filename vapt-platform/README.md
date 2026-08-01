@@ -9,9 +9,6 @@ analytics.
 
 **Stack:** Node.js, Express.js, MongoDB, React.js (Vite), Docker, Nmap, OWASP ZAP.
 
-**Live demo:** _add your deployed URL here once hosted_
-**Demo video:** _add a 60–90s walkthrough link here (Loom/YouTube unlisted works well)_
-
 ## Why I built this
 
 Most student security projects either wrap a single CLI tool in a form, or fake the
